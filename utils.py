@@ -181,24 +181,19 @@ def InitModelDevi(train_system_path:str, num_model_devi_init:int, output_dir:str
         print('Other formats have not been implemented yet')
         pass
 
-def get_kpoints(system:dpdata.system.System,atoms_list,kspacing:float):
+def get_kpoints(system:dpdata.system.System,kspacing:float,atoms_list=None):
     if (system is None) and (atoms_list is None):
         raise RuntimeError("Please specify system!")
 
-    if (istype(system,dpdata.System.system)):
+    if (isinstance(system,dpdata.system.System)):
         atoms_list = system.to("ase/structure")
         
     cell_list = [atoms.get_cell() for atoms in atoms_list]
-    rcell_list = [np.linalg.inv(np.array(cell)) for cell in cell_array]
+    rcell_list = [np.linalg.inv(np.array(cell)) for cell in cell_list]
     rcell_list = [rcell.T for rcell in rcell_list]
+    kpoints = [[np.ceil(2*np.pi*np.linalg.norm(ii)/kspacing).astype(int) for ii in rcell] for rcell in rcell_list]
 
-
-
-
-    
-
-    
-
+    return kpoints
 
 def TrainTestSplit():
     pass
