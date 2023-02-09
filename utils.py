@@ -7,18 +7,18 @@ import os
 
 def get_calc_time(filepath:str):
     # Get calculation time from quantum espresso output file
-    f = open(filepath,'r')
-    try:
-        pwo_lines = f.readlines()
-    except:
-        raise RuntimeError("Please specify the correct file")
-    time_line = pwo_lines[-8].split()
-    hour_list = [i for i in time_line if ('h' in i and not('m' in i) and not('s' in i))]
-    min_list = [i for i in time_line if ('m' in i and not('h' in i) and not('s' in i))]
-    sec_list = [i for i in time_line if ('s' in i and not('h' in i) and not('m' in i))]
-    min_sec_list = [i for i in time_line if (('m' in i) and ('s' in i) and not('h' in i))]
-    hour_min_list = [i for i in time_line if (('h' in i) and ('m' in i) and not('s' in i))]
-    hour_min_sec_list = [i for i in time_line if (('h' in i) and ('m' in i) and ('s' in i))]
+    with open(filepath,'r') as f:
+        try:
+            pwo_lines = f.readlines()
+        except:
+            raise RuntimeError("Please specify the correct file")
+        time_line = pwo_lines[-8].split()
+        hour_list = [i for i in time_line if ('h' in i and not('m' in i) and not('s' in i))]
+        min_list = [i for i in time_line if ('m' in i and not('h' in i) and not('s' in i))]
+        sec_list = [i for i in time_line if ('s' in i and not('h' in i) and not('m' in i))]
+        min_sec_list = [i for i in time_line if (('m' in i) and ('s' in i) and not('h' in i))]
+        hour_min_list = [i for i in time_line if (('h' in i) and ('m' in i) and not('s' in i))]
+        hour_min_sec_list = [i for i in time_line if (('h' in i) and ('m' in i) and ('s' in i))]
 
     if len(hour_list)==0:
         hour_list.append('0h')
@@ -37,6 +37,7 @@ def get_calc_time(filepath:str):
     second = np.array(re.findall(r"(\d*\.\d*)s",sec_list[-1])+re.findall(r"(\d*\.\d*)s",min_sec_list[-1])+re.findall(r"(\d*\.\d*)s",hour_min_sec_list[-1]),dtype=float)
     time = np.sum(hour)*3600+np.sum(min)*60+np.sum(second)
     return time
+
 
 def force_distribution(atoms_list,expand=True,**kwargs):
     """
@@ -59,7 +60,7 @@ def force_distribution(atoms_list,expand=True,**kwargs):
         raise RuntimeError("Only support atom list read in!")
     force_list = np.array([atoms.get_forces(**kwargs) for atoms in atoms_list])
     if expand==True:
-        force_list = force_list.reshape(len(atoms_list)*len(atoms_list[0]*3))
+        force_list = force_list.reshape(len(atoms_list)*len(atoms_list[0])*3)
     return force_list
     
 def energy_distribution(atoms_list,**kwargs):
@@ -198,3 +199,5 @@ def get_kpoints(system:dpdata.system.System,kspacing:float,atoms_list=None):
 def TrainTestSplit():
     pass
 
+def get_system(parent_dir:str,ignored):
+    import glob

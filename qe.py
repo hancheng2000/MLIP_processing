@@ -90,8 +90,8 @@ def InitJobGen(
 
     kpoints_list = utils.get_kpoints(system, kspacing = kspacing)
 
-    for i in range(starting_index,len(system)):
-        dir = to_dir+f"/{i}/pbe"
+    for i in range(0,len(system)):
+        dir = to_dir+f"/{i+starting_index}/pbe"
         if os.path.exists(dir)==False:
             os.makedirs(dir)
 
